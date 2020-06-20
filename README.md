@@ -1,30 +1,6 @@
 # hetzner-fix-report
 Fixes Hetzner CSV reports by cleaning the CSV and merging project name from PDF.
 
-## Original & enriched format
-Hetzner's original CSV reports have the problem of being unprecise and not machine readable.
-This is especially noticeable in the long multiline comment column that may is mostly human readable.
-Currently the PDF report contains additional information about the entry's (server/backup) associated project.
-Since this information is not contained within the CSV reports I wanted to fix this.
-The enriched format has the following keys and examplary values:
-
-Key | Example
-:-|:-:
-`id` | `2520725`
-`name` | `my-server`
-`project` | `My Project`
-`type` | `cx31`
-`quantity` | `1`
-`usage_hours` | `42`
-`price` | `8.9`
-`price_netto` | `4.9`
-`price_max` | `2.49`
-`day_from` | `2020-06-01`
-`day_to` | `2020-06-30`
-`is_backup` | `False`
-`is_server` | `True`
-`is_ceph` | `False`
-
 ## Installation
 This project is hosted on [PyPI](https://pypi.org/project/hetzner-fix-report/) and can therefore be installed easily through pip:
 
@@ -57,3 +33,27 @@ When in a directory that holds multiple `csv` and `pdf` files the following shel
 mkdir -p fix
 for csv in *.csv; do pdf=${f%%.*}.pdf; hetzner-fix-report -o "fix/$csv" "$csv" "$pdf"; done
 ```
+
+## Original & enriched format
+Hetzner's original CSV reports have the problem of being unprecise and not machine readable.
+This is especially noticeable in the long multiline comment column that may is mostly human readable.
+Currently the PDF report contains additional information about the entry's (server/backup) associated project.
+Since this information is not contained within the CSV reports I wanted to fix this.
+The enriched format has the following keys and examplary values:
+
+Key | Example
+:-|:-:
+`id` | `2520725`
+`name` | `my-server`
+`project` | `My Project`
+`type` | `cx31`
+`quantity` | `1`
+`usage_hours` | `42`
+`price` | `8.9`
+`price_netto` | `4.9`
+`price_max` | `2.49`
+`day_from` | `2020-06-01`
+`day_to` | `2020-06-30`
+`is_backup` | `False`
+`is_server` | `True`
+`is_ceph` | `False`
