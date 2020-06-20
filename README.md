@@ -1,20 +1,27 @@
-
 # hetzner-fix-report
 
-[![Documentation Status](https://readthedocs.org/projects/hetzner-fix-report/badge/?version=latest)](https://hetzner-fix-report.readthedocs.io/en/latest/?badge=latest)
-[![Tests Status](https://github.com/flxai/hetzner-fix-report/workflows/CI/badge.svg)](https://github.com/flxai/hetzner-fix-report/actions?query=workflow%3ACI)
+Fixes Hetzner CSV reports by cleaning the CSV and merging project name from PDF.
 
-- Documentation: https://hetzner-fix-report.readthedocs.io
-- PyPI: https://pypi.org/project/hetzner-fix-report
+## Installation
 
-## Getting started
+This project is hosted on [PyPI](https://pypi.org/project/pyceau/) and can therefore be installed easily through pip:
 
-Installation via pip:
+```
+pip install hetzner_fix_report
+```
 
-    pip install hetzner_fix_report
-    
-Using the fizzbuzz:
+Dependending on your setup you may need to add `--user` after the install.
 
-    >>> from hetzner_fix_report.fizzbuzz import fizzbuzz
-    >>> fizzbuzz(35)
-    'fizzbuzz'
+## Usage
+
+Use the command line interface to combine a `csv` and `pdf` file:
+
+```
+hetzner-fix-report Hetzner_2020-01-05_RXXXXXXXXXX.csv Hetzner_2020-01-05_RXXXXXXXXXX.pdf
+```
+
+Or shorten it using brace expansion:
+
+```
+hetzner-fix-report Hetzner_2020-01-05_RXXXXXXXXXX.{csv,pdf}
+```
