@@ -1,0 +1,37 @@
+name: Use template
+
+on:
+  create:
+    branches: master
+
+jobs:
+
+  rename_project:
+    runs-on: ubuntu-18.04
+
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Rename "Hello GitHub Actions" to repository specific name
+        run: |
+          PROJECT_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f 2)
+          PACKAGE_NAME=$(echo $PROJECT_NAME | tr '[:upper:]' '[:lower:]' | sed 's/-/_/g')
+
+          sed -i '/# Template/,/---/d' README.md
+          sed -i "s/Hello GitHub Actions/$PROJECT_NAME/g" README.md docs/conf.py docs/index.rst
+          sed -i "s=soerface/template-python-package=$GITHUB_REPOSITORY=g" README.md
+          sed -i "s/hello-gh-actions/$PROJECT_NAME/g" README.md setup.py
+          sed -i "s/hello_gh_actions/$PACKAGE_NAME/g" setup.cfg .flake8 hello_gh_actions/__init__.py tests/*.py README.md
+          sed -i "s/Sören Wegener/$(git log --format='%an' HEAD^!)/g" setup.cfg LICENSE docs/conf.py
+          sed -i "s/soerface@flipdot.org/$(git log --format='%ae' HEAD^!)/g" setup.cfg
+          git mv hello_gh_actions $PACKAGE_NAME
+      - name: Commit the changes
+        run: |
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config --global user.name "$GITHUB_ACTOR"
+          git add -A
+          git commit -m "Initialized the repository"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
