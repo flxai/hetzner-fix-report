@@ -39,6 +39,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+        # Adopted from https://pypi.org/project/pdftotext/
+      - name: Setup poppler
+        run: sudo apt-get install build-essential libpoppler-cpp-dev pkg-config python-dev
       - name: Install nosetests
         run: pip install nose # for code coverage: coverage
       - name: Run tests
