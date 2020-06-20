@@ -25,3 +25,5 @@ Or shorten it using brace expansion:
 ```
 hetzner-fix-report Hetzner_2020-01-05_RXXXXXXXXXX.{csv,pdf}
 ```
+
+If you want to save the enriched csv output, use either the `-o` parameter as explained in the program's help or redirect output to a file using `>`.
