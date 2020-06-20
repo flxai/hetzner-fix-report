@@ -58,9 +58,11 @@ def hetzner_fix_report(csv_path, pdf_path):
     df['id'] = df.comment.apply(lambda x: apply_regex(x, r'^#([0-9]+) ".*'))
 
     # Maximum price for hourly rated servers
-    df['price_max'] = df.comment.apply(lambda x: apply_regex(x.replace('\n', ' '), r'.+Maximalpreis für diesen Zeitraum: ([0-9,]+) €.*'))
+    df['price_max'] = df.comment.apply(lambda x: apply_regex(x.replace('\n', ' '),
+                                       r'.+Maximalpreis für diesen Zeitraum: ([0-9,]+) €.*'))
     df_price_max_mask = ~df.price_max.isna()
-    df.loc[df_price_max_mask, 'price_max'] = df.price_max.loc[df_price_max_mask].apply(lambda x: float(x.replace(',', '.')))
+    df.loc[df_price_max_mask, 'price_max'] = \
+        df.price_max.loc[df_price_max_mask].apply(lambda x: float(x.replace(',', '.')))
 
     # Set server name
     df['name'] = df.comment.apply(lambda x: apply_regex(x, r'.+"([^"]+)"'))
