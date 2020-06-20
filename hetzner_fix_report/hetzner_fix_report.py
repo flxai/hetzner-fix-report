@@ -81,7 +81,7 @@ def hetzner_fix_report(csv_path, pdf_path):
     # Collect individual projects' names
     projects = []
     for page in pdf:
-        projects += re.findall(r'Projekt "([^"]+)"', page)
+        projects += re.findall(r'Proje[ck]t "([^"]+)"', page)
     projects = np.array(projects)
 
     # Collect individual projects' string locations
