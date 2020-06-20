@@ -13,4 +13,7 @@ setup(
         'Bug Tracker': f'{github_url}/issues',
         'Documentation': 'https://hetzner-fix-report.readthedocs.io',
     },
+    scripts=[
+        'bin/hetzner-fix-report',
+    ]
 )
