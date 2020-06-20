@@ -1,1 +1,4 @@
 pbr==5.4.4
+pdftotext>=2.1.4
+numpy>=1.18.4
+pandas>=1.0.3
