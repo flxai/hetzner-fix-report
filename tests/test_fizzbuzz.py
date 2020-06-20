@@ -1,5 +1,5 @@
 from unittest import TestCase
-from hello_gh_actions.fizzbuzz import fizzbuzz
+from hetzner_fix_report.fizzbuzz import fizzbuzz
 
 
 class TestFizzBuzz(TestCase):

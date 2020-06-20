@@ -19,9 +19,9 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Hello GitHub Actions'
-copyright = '2019, Sören Wegener'
-author = 'Sören Wegener'
+project = 'hetzner-fix-report'
+copyright = '2019, Felix'
+author = 'Felix'
 
 # The full version, including alpha/beta/rc tags
 release = re.sub('^v', '', os.popen('git describe --tags').read().strip())

@@ -3,6 +3,6 @@ exclude = build
 max_line_length=120
 
 per-file-ignores =
-    hello_gh_actions/__init__.py:F401
+    hetzner_fix_report/__init__.py:F401
     setup.py:E121
     other_project/*:W9

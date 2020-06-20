@@ -11,6 +11,6 @@ setup(
     project_urls={
         'Source Code': github_url,
         'Bug Tracker': f'{github_url}/issues',
-        'Documentation': 'https://hello-gh-actions.readthedocs.io',
+        'Documentation': 'https://hetzner-fix-report.readthedocs.io',
     },
 )
