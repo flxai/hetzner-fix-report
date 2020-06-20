@@ -31,7 +31,7 @@ When in a directory that holds multiple `csv` and `pdf` files the following shel
 
 ```
 mkdir -p fix
-for csv in *.csv; do pdf=${f%%.*}.pdf; hetzner-fix-report -o "fix/$csv" "$csv" "$pdf"; done
+for csv in *.csv; do pdf=${csv%%.*}.pdf; hetzner-fix-report -o "fix/$csv" "$csv" "$pdf"; done
 ```
 
 ## Original & enriched format
