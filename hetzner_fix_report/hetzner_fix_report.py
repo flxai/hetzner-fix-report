@@ -85,25 +85,29 @@ def hetzner_fix_report(csv_path, pdf_path):
     projects = np.array(projects)
 
     # Collect individual projects' string locations
+    page_factor = 1e6
     projects_loc = []
     for project in projects:
-        for page in pdf:
+        for i, page in enumerate(pdf):
             loc = page.find(project)
             if loc != -1:
-                projects_loc.append(loc)
+                # Add page offset to make locations comparable
+                projects_loc.append(loc + i * page_factor)
     projects_loc = np.array(projects_loc)
 
     # Collect individual server ids' string locations and map them to nearest previous project name
     df['project'] = np.nan
     id_loc = []
-    for idx, i in df.id[df.id.notnull()].items():
-        for page in pdf:
-            loc = page.find(i)
+    for idx, eid in df.id[df.id.notnull()].items():
+        for i, page in enumerate(pdf):
+            loc = page.find(eid)
             if loc == -1:
                 continue
+            # Add page offset to make locations comparable
+            loc = np.array(loc + i * page_factor)
             id_loc.append(loc)
             diff_loc = projects_loc - loc
-            project_name = projects[np.where(diff_loc > 0, diff_loc, np.inf).argmin()]
+            project_name = projects[np.where(diff_loc < 0, diff_loc, -np.inf).argmax()]
             df.loc[idx, 'project'] = project_name
 
     # Reorder columns
