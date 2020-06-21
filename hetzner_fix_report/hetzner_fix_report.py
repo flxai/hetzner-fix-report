@@ -1,8 +1,8 @@
-import re
 import pdftotext
 
 import numpy as np
 import pandas as pd
+import regex as re
 
 
 def get_server_type(server_type_str):
@@ -16,9 +16,15 @@ def get_server_type(server_type_str):
     return server_type_list[1].split('-')[0]
 
 
-def apply_regex(server_type_str, regex, ret_id=1):
+def regex_match(server_type_str, regex, ret_id=1):
     """Applies a regular expression and returns a match """
     m = re.match(regex, server_type_str)
+    return np.NaN if m is None else m.group(ret_id)
+
+
+def regex_search(server_type_str, regex, ret_id=1):
+    """Applies a regular expression and returns a match """
+    m = re.search(regex, server_type_str)
     return np.NaN if m is None else m.group(ret_id)
 
 
@@ -55,21 +61,21 @@ def hetzner_fix_report(csv_path, pdf_path):
     df['type'] = df.server_type_str.apply(get_server_type)
 
     # Hetzner's instance id
-    df['server_id'] = df.comment.apply(lambda x: apply_regex(x, r'.*#([0-9]+) ".*'))
+    df['server_id'] = df.comment.apply(lambda x: regex_match(x, r'.*#([0-9]+) ".*'))
 
     # Maximum price for hourly rated servers
-    df['price_max'] = df.comment.apply(lambda x: apply_regex(x.replace('\n', ' '),
-                                       r'.+Maximalpreis für diesen Zeitraum: ([0-9,]+) €.*'))
+    df['price_max'] = df.comment.apply(lambda x: regex_search(x,
+                                       r'(?:period|Zeitraum).*?((?:€\s*[\d.]+)|(?:[\d,]+\s*€))'))
     df_price_max_mask = ~df.price_max.isna()
     df.loc[df_price_max_mask, 'price_max'] = \
-        df.price_max.loc[df_price_max_mask].apply(lambda x: float(x.replace(',', '.')))
+        df.price_max.loc[df_price_max_mask].apply(lambda x: float(x.replace('€', '').replace(',', '.')))
 
     # Set server name
-    df['name'] = df.comment.apply(lambda x: apply_regex(x, r'.+"([^"]+)"'))
+    df['name'] = df.comment.apply(lambda x: regex_match(x, r'.+"([^"]+)"'))
     df.loc[df['name'] == 'instance', 'name'] = np.nan
 
     # Usage in hours
-    df['usage_hours'] = df.comment.apply(lambda x: apply_regex(x.replace('\n', ' '), r'.+Nutzung: ([0-9]+) h.+'))
+    df['usage_hours'] = df.comment.apply(lambda x: regex_search(x, r'(?:Usage|Nutzung):.*?(\d+)\s*h'))
 
     # Drop unnecessary columns
     df.drop(['comment', 'server_type_str', 'empty'], axis=1, inplace=True)
