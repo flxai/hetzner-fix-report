@@ -4,16 +4,22 @@ Fixes Hetzner CSV reports by cleaning the CSV and merging project name from PDF.
 ## Installation
 ### Preliminary libraries
 
-Debian, Ubuntu, and friends
+Debian, Ubuntu, etc
 
 ```
 sudo apt-get install build-essential libpoppler-cpp-dev pkg-config python-dev
 ```
 
-Fedora, Red Hat, and friends
+Fedora, Red Hat, etc
 
 ```
 sudo yum install gcc-c++ pkgconfig poppler-cpp-devel python-devel redhat-rpm-config
+```
+
+Arch, etc
+
+```
+sudo pacman -S poppler
 ```
 
 ### Python package
