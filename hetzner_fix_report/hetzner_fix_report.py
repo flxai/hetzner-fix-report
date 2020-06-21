@@ -36,7 +36,7 @@ def hetzner_fix_report(csv_path, pdf_path):
     ]
 
     # Keys' new order
-    df_keys_reorder = ['id', 'name', 'project', 'type', 'quantity', 'usage_hours', 'price', 'price_netto',
+    df_keys_reorder = ['server_id', 'name', 'project', 'type', 'quantity', 'usage_hours', 'price', 'price_netto',
                        'price_max', 'day_from', 'day_to', 'is_backup', 'is_server', 'is_ceph']
 
     # Load originally fucked CSV
@@ -55,7 +55,7 @@ def hetzner_fix_report(csv_path, pdf_path):
     df['type'] = df.server_type_str.apply(get_server_type)
 
     # Hetzner's instance id
-    df['id'] = df.comment.apply(lambda x: apply_regex(x, r'^#([0-9]+) ".*'))
+    df['server_id'] = df.comment.apply(lambda x: apply_regex(x, r'.*#([0-9]+) ".*'))
 
     # Maximum price for hourly rated servers
     df['price_max'] = df.comment.apply(lambda x: apply_regex(x.replace('\n', ' '),
@@ -97,15 +97,15 @@ def hetzner_fix_report(csv_path, pdf_path):
 
     # Collect individual server ids' string locations and map them to nearest previous project name
     df['project'] = np.nan
-    id_loc = []
-    for idx, eid in df.id[df.id.notnull()].items():
+    sid_loc = []
+    for idx, sid in df.server_id[df.server_id.notnull()].items():
         for i, page in enumerate(pdf):
-            loc = page.find(eid)
+            loc = page.find(sid)
             if loc == -1:
                 continue
             # Add page offset to make locations comparable
             loc = np.array(loc + i * page_factor)
-            id_loc.append(loc)
+            sid_loc.append(loc)
             diff_loc = projects_loc - loc
             project_name = projects[np.where(diff_loc < 0, diff_loc, -np.inf).argmax()]
             df.loc[idx, 'project'] = project_name
