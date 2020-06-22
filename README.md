@@ -62,19 +62,19 @@ Currently the PDF report contains additional information about the entry's (serv
 Since this information is not contained within the CSV reports I wanted to fix this.
 The enriched format has the following keys and examplary values:
 
-Key | Example
-:-|:-:
-`id` | `2520725`
-`name` | `my-server`
-`project` | `My Project`
-`type` | `cx31`
-`quantity` | `1`
-`usage_hours` | `42`
-`price` | `8.9`
-`price_netto` | `4.9`
-`price_max` | `2.49`
-`day_from` | `2020-06-01`
-`day_to` | `2020-06-30`
-`is_backup` | `False`
-`is_server` | `True`
-`is_ceph` | `False`
+Key | Example | New
+:-|:-:| :-:
+`id` | `2520725` | ✔
+`name` | `my-server` | ✔
+`project` | `My Project` | ✔
+`type` | `cx31` |
+`quantity` | `1` |
+`usage_hours` | `42` | ✔
+`price` | `8.9` |
+`price_netto` | `4.9` |
+`price_max` | `2.49` | ✔
+`day_from` | `2020-06-01` |
+`day_to` | `2020-06-30` |
+`is_backup` | `False` | ✔
+`is_server` | `True` | ✔
+`is_ceph` | `False` | ✔
