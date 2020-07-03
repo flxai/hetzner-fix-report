@@ -96,7 +96,7 @@ def hetzner_fix_report(csv_path, pdf_path):
         if m is not None:
             vat = float(m[2])
     if vat is None:
-        eprint(f'VAT information could not be found!')
+        eprint('VAT information could not be found!')
     df['vat'] = vat / 100
     df['price_gross'] = df.price_net * (1 + df.vat)
 
