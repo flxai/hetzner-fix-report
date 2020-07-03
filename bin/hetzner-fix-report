@@ -13,6 +13,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Fixes Hetzner CSV reports by cleaning the CSV and merging project name from PDF')
     parser.add_argument('-o', '--output', help='Output file path. Render to stdout if unused', default=False)
+    parser.add_argument('-f', '--format', help='Format to be used, defaults to CSV', default='csv',
+                        choices=['csv', 'pandas'])
     parser.add_argument('base_csv', help='Path to csv base file')
     parser.add_argument('base_pdf', help='Path to pdf base file')
     
@@ -29,7 +31,12 @@ if __name__ == '__main__':
 
     df = hetzner_fix_report(args.base_csv, args.base_pdf)
 
-    if not args.output:
-        print(df.to_csv(index=False))
+    if args.format == 'csv':
+        if not args.output:
+            print(df.to_csv(index=False))
+        else:
+            df.to_csv(args.output, index=False)
+    elif args.format == 'pandas':
+        print(df)
     else:
-        df.to_csv(args.output, index=False)
+        print(f'Invalid format specified: {args.format}')
