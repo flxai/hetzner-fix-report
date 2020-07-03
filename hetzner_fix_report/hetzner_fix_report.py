@@ -1,8 +1,13 @@
 import pdftotext
+import sys
 
 import numpy as np
 import pandas as pd
 import regex as re
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 
 def get_server_type(server_type_str):
@@ -42,8 +47,8 @@ def hetzner_fix_report(csv_path, pdf_path):
     ]
 
     # Keys' new order
-    df_keys_reorder = ['server_id', 'name', 'project', 'type', 'quantity', 'usage_hours', 'price', 'price_net',
-                       'price_max', 'day_from', 'day_to', 'is_backup', 'is_server', 'is_ceph']
+    df_keys_reorder = ['server_id', 'name', 'project', 'type', 'quantity', 'usage_hours', 'price', 'price_max',
+                       'price_net', 'price_gross', 'vat', 'day_from', 'day_to', 'is_backup', 'is_server', 'is_ceph']
 
     # Load originally fucked CSV
     df = pd.read_csv(csv_path, sep=',', names=df_keys)
@@ -83,6 +88,17 @@ def hetzner_fix_report(csv_path, pdf_path):
     # Combine with pdf to get project names
     with open(pdf_path, 'rb') as f:
         pdf = pdftotext.PDF(f)
+
+    # Collect VAT value
+    vat = None
+    for page in pdf:
+        m = re.search(r'(USt\.|VAT) \(([0-9.,]+) ?%\)', page)
+        if m is not None:
+            vat = float(m[2])
+    if vat is None:
+        eprint(f'VAT information could not be found!')
+    df['vat'] = vat / 100
+    df['price_gross'] = df.price_net * (1 + df.vat)
 
     # Collect individual projects' names
     projects = []
