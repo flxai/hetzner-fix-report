@@ -98,6 +98,7 @@ def hetzner_fix_report(csv_path, pdf_path):
     if vat is None:
         eprint('VAT information could not be found!')
     df['vat'] = vat / 100
+    df['price_net'] = df.quantity * df.price
     df['price_gross'] = df.price_net * (1 + df.vat)
 
     # Collect individual projects' names
