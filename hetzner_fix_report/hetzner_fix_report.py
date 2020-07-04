@@ -38,8 +38,8 @@ def hetzner_fix_report(csv_path, pdf_path):
     df_keys = [
         'server_type_str',
         'comment',
-        'day_from',
-        'day_to',
+        'date_from',
+        'date_to',
         'quantity',
         'price',
         'price_net',
@@ -48,7 +48,7 @@ def hetzner_fix_report(csv_path, pdf_path):
 
     # Keys' new order
     df_keys_reorder = ['server_id', 'name', 'project', 'type', 'quantity', 'usage_hours', 'price', 'price_max',
-                       'price_net', 'price_gross', 'vat', 'day_from', 'day_to', 'is_backup', 'is_server', 'is_ceph']
+                       'price_net', 'price_gross', 'vat', 'date_from', 'date_to', 'is_backup', 'is_server', 'is_ceph']
 
     # Load originally fucked CSV
     df = pd.read_csv(csv_path, sep=',', names=df_keys)
