@@ -95,8 +95,14 @@ def hetzner_fix_report(csv_path, pdf_path):
         m = re.search(r'(USt\.|VAT) \(([0-9.,]+) ?%\)', page)
         if m is not None:
             vat = float(m[2])
+            break
+        else:
+            m = re.search(r'Tax rate.*\n.*?([\d.,]+) ?%', page)
+            if m is not None:
+                vat = float(m[1])
     if vat is None:
         eprint('VAT information could not be found!')
+        sys.exit(1)
     df['vat'] = vat / 100
     df['price_net'] = df.quantity * df.price
     df['price_gross'] = df.price_net * (1 + df.vat)
