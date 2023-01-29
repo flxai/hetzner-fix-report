@@ -1,4 +1,5 @@
 import sys
+from decimal import Decimal
 
 import numpy as np
 import pandas as pd
@@ -9,15 +10,14 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def get_server_type(server_type_str):
-    """Check wether string is contained"""
+def get_server_type(server_type_str: str):
+    """Check whether string is contained"""
     server_type_list = server_type_str.split(' ')
-    if len(server_type_list) < 2:
-        if server_type_str == 'Backup':
-            return 'backup'
-        else:
-            return 'unknown'
-    return server_type_list[1].split('-')[0]
+    if len(server_type_list) == 1:
+        return server_type_str.lower()
+    if server_type_list[0].lower() == 'server':
+        return server_type_list[1].partition('-')[0]
+    return 'unknown'
 
 
 def regex_match(server_type_str, regex, ret_id=1):
@@ -50,7 +50,7 @@ def hetzner_fix_report(csv_path):
                        'price_net', 'price_gross', 'vat', 'date_from', 'date_to', 'is_backup', 'is_server', 'is_ceph']
 
     # Load originally fucked CSV
-    df = pd.read_csv(csv_path, sep=',', names=df_keys)
+    df = pd.read_csv(csv_path, sep=',', names=df_keys, converters={'price': Decimal, 'price_net': Decimal, 'quantity': Decimal})
 
     # Whether entry is backup
     df['is_backup'] = df.server_type_str.apply(lambda x: 'Backup' in x)
@@ -85,7 +85,7 @@ def hetzner_fix_report(csv_path):
     df.drop(['comment', 'server_type_str', 'empty'], axis=1, inplace=True)
 
     # VAT was previously extracted from PDF. It is not included in the CSV, so we currently just assume 19%.
-    vat = 19
+    vat = Decimal(19)
     df['vat'] = vat / 100
     df['price_net'] = df.quantity * df.price
     df['price_gross'] = df.price_net * (1 + df.vat)
