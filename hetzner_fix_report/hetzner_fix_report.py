@@ -92,7 +92,7 @@ def hetzner_fix_report(csv_path):
 
     # Collect individual server ids' string locations and map them to nearest previous project name
     df['project'] = np.nan
-    for idx, sid in df.server_id[df.server_id.notnull()].items():
+    for idx in df.index:
         df.loc[idx, 'project'] = regex_search(idx, r'Cloud Project "([^"]+)"')
 
     # Reorder columns
