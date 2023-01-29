@@ -1,5 +1,5 @@
 [flake8]
-exclude = build
+exclude = build,venv
 max_line_length=120
 
 per-file-ignores =

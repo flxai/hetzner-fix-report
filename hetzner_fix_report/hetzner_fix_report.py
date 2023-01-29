@@ -50,7 +50,11 @@ def hetzner_fix_report(csv_path):
                        'price_net', 'price_gross', 'vat', 'date_from', 'date_to', 'is_backup', 'is_server', 'is_ceph']
 
     # Load originally fucked CSV
-    df = pd.read_csv(csv_path, sep=',', names=df_keys, converters={'price': Decimal, 'price_net': Decimal, 'quantity': Decimal})
+    df = pd.read_csv(csv_path, sep=',', names=df_keys, converters={
+        'price': Decimal,
+        'price_net': Decimal,
+        'quantity': Decimal,
+    })
 
     # Whether entry is backup
     df['is_backup'] = df.server_type_str.apply(lambda x: 'Backup' in x)
