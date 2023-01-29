@@ -1,48 +1,31 @@
-# hetzner-fix-report
+<# hetzner-fix-report
+
+Takes invoice CSV files from Hetzner and changes the formatting, splitting columns which contain various information into multiple columns.
+
+Versions <1.0 took the Hetzner CSV *and* PDF as input, and extracted e.g. project information from the PDF.
+However, today this information is also included in the CSV, so the PDF is no longer needed.
+If you have older invoices, you can re-download them from the Hetzner invoice page in the new format.
+Otherwise, if you can't re-download the invoice, you can use the old version of hetzner-fix-report.
+
 Fixes Hetzner CSV reports by cleaning the CSV and merging project name from PDF.
 
+
 ## Installation
-### Preliminary libraries
 
-Debian, Ubuntu, etc
-
-```
-sudo apt-get install build-essential libpoppler-cpp-dev pkg-config python-dev
-```
-
-Fedora, Red Hat, etc
-
-```
-sudo yum install gcc-c++ pkgconfig poppler-cpp-devel python-devel redhat-rpm-config
-```
-
-Arch, etc
-
-```
-sudo pacman -S poppler
-```
-
-### Python package
 This project is hosted on [PyPI](https://pypi.org/project/hetzner-fix-report/) and can therefore be installed easily through pip:
 
 ```
 pip install hetzner_fix_report
 ```
 
-Dependending on your setup you may need to add `--user` after the install.
+Depending on your setup you may need to add `--user` after the installation.
 
 ## Usage
 ### Single report
-Use the command line interface to combine a `csv` and `pdf` file:
+Use the command line interface to process a `csv` file:
 
 ```
-hetzner-fix-report Hetzner_2020-01-05_RXXXXXXXXXX.csv Hetzner_2020-01-05_RXXXXXXXXXX.pdf
-```
-
-Or shorten it using brace expansion:
-
-```
-hetzner-fix-report Hetzner_2020-01-05_RXXXXXXXXXX.{csv,pdf}
+hetzner-fix-report Hetzner_2020-01-05_RXXXXXXXXXX.csv
 ```
 
 If you want to save the enriched csv output, use either the `-o` parameter as explained in the program's help or redirect output to a file using `>`.
@@ -52,15 +35,13 @@ When in a directory that holds multiple `csv` and `pdf` files the following shel
 
 ```
 mkdir -p fix
-for csv in *.csv; do pdf=${csv%%.*}.pdf; hetzner-fix-report -o "fix/$csv" "$csv" "$pdf"; done
+for csv in *.csv; do hetzner-fix-report -o "fix/$csv" "$csv"; done
 ```
 
 ## Original & enriched format
 Hetzner's original CSV reports have the problem of being unprecise and not machine readable.
-This is especially noticeable in the long multiline comment column that may is mostly human readable.
-Currently the PDF report contains additional information about the entry's (server/backup) associated project.
-Since this information is not contained within the CSV reports I wanted to fix this.
-The enriched format has the following keys and examplary values:
+This is especially noticeable in the long multiline comment column that is mostly human readable.
+The enriched format has the following keys and exemplary values:
 
 Key | Example | New
 :-|:-:| :-:
