@@ -14,8 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--format', help='Format to be used, defaults to CSV', default='csv',
                         choices=['csv', 'pandas'])
     parser.add_argument('-V', '--version', help='Print version number and exit', action='store_true')
-    parser.add_argument('base_csv', help='Path to csv base file', nargs='?')
-    parser.add_argument('base_pdf', help='Path to pdf base file', nargs='?')
+    parser.add_argument('base_csv', help='Path to csv base file')
 
     args = parser.parse_args()
 
@@ -23,17 +22,13 @@ if __name__ == '__main__':
         print(hetzner_fix_report.__version__)
         sys.exit(0)
 
-    if len(sys.argv) < 3:
-        parser.print_help(sys.stderr)
-        sys.exit(1)
-
     # Check if files exists
-    for f in [args.base_csv, args.base_pdf]:
+    for f in [args.base_csv]:
         if not os.path.isfile(f):
             print(f"File not found: {f}")
             sys.exit(1)
 
-    df = hetzner_fix_report.hetzner_fix_report(args.base_csv, args.base_pdf)
+    df = hetzner_fix_report.hetzner_fix_report(args.base_csv)
 
     if args.format == 'csv':
         if not args.output:
