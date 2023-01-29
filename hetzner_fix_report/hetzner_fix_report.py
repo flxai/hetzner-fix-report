@@ -1,4 +1,3 @@
-import pdftotext
 import sys
 
 import numpy as np
@@ -33,7 +32,7 @@ def regex_search(server_type_str, regex, ret_id=1):
     return np.NaN if m is None else m.group(ret_id)
 
 
-def hetzner_fix_report(csv_path, pdf_path):
+def hetzner_fix_report(csv_path):
     # Keys for originally fucked CSV
     df_keys = [
         'server_type_str',
@@ -53,7 +52,7 @@ def hetzner_fix_report(csv_path, pdf_path):
     # Load originally fucked CSV
     df = pd.read_csv(csv_path, sep=',', names=df_keys)
 
-    # Wether entry is backup
+    # Whether entry is backup
     df['is_backup'] = df.server_type_str.apply(lambda x: 'Backup' in x)
 
     # Wether entry is server instance
@@ -85,59 +84,16 @@ def hetzner_fix_report(csv_path, pdf_path):
     # Drop unnecessary columns
     df.drop(['comment', 'server_type_str', 'empty'], axis=1, inplace=True)
 
-    # Combine with pdf to get project names
-    with open(pdf_path, 'rb') as f:
-        pdf = pdftotext.PDF(f)
-
-    # Collect VAT value
-    vat = None
-    for page in pdf:
-        m = re.search(r'(USt\.|VAT) \(([0-9.,]+) ?%\)', page)
-        if m is not None:
-            vat = float(m[2])
-            break
-        else:
-            m = re.search(r'Tax rate.*\n.*?([\d.,]+) ?%', page)
-            if m is not None:
-                vat = float(m[1])
-    if vat is None:
-        eprint('VAT information could not be found!')
-        sys.exit(1)
+    # VAT was previously extracted from PDF. It is not included in the CSV, so we currently just assume 19%.
+    vat = 19
     df['vat'] = vat / 100
     df['price_net'] = df.quantity * df.price
     df['price_gross'] = df.price_net * (1 + df.vat)
 
-    # Collect individual projects' names
-    projects = []
-    for page in pdf:
-        projects += re.findall(r'Proje[ck]t "([^"]+)"', page)
-    projects = np.array(projects)
-
-    # Collect individual projects' string locations
-    page_factor = 1e6
-    projects_loc = []
-    for project in projects:
-        for i, page in enumerate(pdf):
-            loc = page.find(project)
-            if loc != -1:
-                # Add page offset to make locations comparable
-                projects_loc.append(loc + i * page_factor)
-    projects_loc = np.array(projects_loc)
-
     # Collect individual server ids' string locations and map them to nearest previous project name
     df['project'] = np.nan
-    sid_loc = []
     for idx, sid in df.server_id[df.server_id.notnull()].items():
-        for i, page in enumerate(pdf):
-            loc = page.find(sid)
-            if loc == -1:
-                continue
-            # Add page offset to make locations comparable
-            loc = np.array(loc + i * page_factor)
-            sid_loc.append(loc)
-            diff_loc = projects_loc - loc
-            project_name = projects[np.where(diff_loc < 0, diff_loc, -np.inf).argmax()]
-            df.loc[idx, 'project'] = project_name
+        df.loc[idx, 'project'] = regex_search(idx, r'Cloud Project "([^"]+)"')
 
     # Reorder columns
     df = df[df_keys_reorder]

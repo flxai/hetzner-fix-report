@@ -9,6 +9,11 @@ Otherwise, if you can't re-download the invoice, you can use the old version of 
 
 Fixes Hetzner CSV reports by cleaning the CSV and merging project name from PDF.
 
+## Known issues
+
+- In previous versions, the VAT was extracted from the PDF. The current version just processes the CSV, which does not contain the VAT.
+  For compatibility (price_gross column), the VAT is set to 19%.
+
 
 ## Installation
 
